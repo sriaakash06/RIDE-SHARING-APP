@@ -20,6 +20,13 @@ android {
         jvmTarget = JavaVersion.VERSION_17.toString()
     }
 
+    val localProperties = java.util.Properties()
+    val localPropertiesFile = rootProject.file("local.properties")
+    if (localPropertiesFile.exists()) {
+        localPropertiesFile.inputStream().use { localProperties.load(it) }
+    }
+    val mapsApiKey = localProperties.getProperty("MAPS_API_KEY") ?: ""
+
     defaultConfig {
         // TODO: Specify your own unique Application ID (https://developer.android.com/studio/build/application-id.html).
         applicationId = "com.antigravity.rideshare.ride_sharing_app"
@@ -29,6 +36,7 @@ android {
         targetSdk = flutter.targetSdkVersion
         versionCode = flutter.versionCode
         versionName = flutter.versionName
+        manifestPlaceholders["mapsApiKey"] = mapsApiKey
     }
 
     buildTypes {

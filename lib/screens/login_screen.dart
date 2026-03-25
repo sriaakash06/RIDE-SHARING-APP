@@ -107,13 +107,19 @@ class _LoginScreenState extends State<LoginScreen> {
                       ? Center(child: CircularProgressIndicator(color: Color(0xFFA78BFA)))
                       : ElevatedButton(
                           onPressed: () async {
-                            bool success = await authProvider.login(
+                            String? error = await authProvider.login(
                               _emailController.text.trim(),
                               _passwordController.text,
                             );
-                            if (!success && context.mounted) {
+                            if (error == null) {
+                              Navigator.of(context).pushReplacementNamed('/home');
+                            } else if (context.mounted) {
                               ScaffoldMessenger.of(context).showSnackBar(
-                                SnackBar(content: Text('Login failed. Please check your credentials.'), backgroundColor: Colors.red),
+                                SnackBar(
+                                  content: Text(error), 
+                                  backgroundColor: Colors.red,
+                                  duration: Duration(seconds: 4),
+                                ),
                               );
                             }
                           },

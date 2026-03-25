@@ -25,20 +25,40 @@ class AuthProvider with ChangeNotifier {
     }
   }
 
-  Future<bool> login(String email, String password) async {
+  // Returns null on success, error message string on failure
+  Future<String?> login(String email, String password) async {
     _isLoading = true;
     notifyListeners();
-    
-    var result = await _authService.signIn(email, password);
-    
-    if (!isFirebaseInitialized && result != null) {
-      _userModel = await _authService.getUserData('mock_uid');
+
+    String? error = await _authService.signIn(email, password);
+
+    if (error == null) {
+      // Success — now try to fetch user data
+      try {
+        if (!isFirebaseInitialized) {
+          _userModel = await _authService.getUserData('mock_uid');
+        } else {
+          // Force fetch data immediately to catch Firestore rules issues before returning success
+          _userModel = await _authService.getUserData(_authService.user.first.toString());
+        }
+      } catch (e) {
+        // If Firestore blocks the read (e.g. permission rules), we logout and return the error
+        await _authService.signOut();
+        _userModel = null;
+        
+        // This regex/check catches standard Firestore permission denied errors
+        if (e.toString().contains('permission-denied') || e.toString().contains('PERMISSION_DENIED')) {
+          error = "Database Error: Please ensure Firestore Database is created in Test Mode.";
+        } else {
+          error = e.toString();
+        }
+      }
     }
-    
+
     _isLoading = false;
     notifyListeners();
-    
-    return result != null;
+
+    return error; // null = success, string = error message
   }
 
   // Returns null on success, error message string on failure
