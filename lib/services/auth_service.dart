@@ -16,25 +16,36 @@ class AuthService {
     }
   }
 
-  // Sign in with email and password
-  Future<dynamic> signIn(String email, String password) async {
+  // Sign in with email and password — returns null on success, error string on fail
+  Future<String?> signIn(String email, String password) async {
     if (!isFirebaseInitialized) {
-      // Mock successful login for prototype
-      return "mock_user_credential";
+      return null;
     }
     try {
-      return await _auth!.signInWithEmailAndPassword(email: email, password: password);
+      await _auth!.signInWithEmailAndPassword(email: email, password: password);
+      return null; // success
+    } on FirebaseAuthException catch (e) {
+      switch (e.code) {
+        case 'user-not-found':
+          return 'No user found for that email.';
+        case 'wrong-password':
+          return 'Wrong password provided.';
+        case 'invalid-email':
+          return 'Invalid email address.';
+        case 'user-disabled':
+          return 'This user account has been disabled.';
+        default:
+          return e.message ?? 'Login failed. Please check your credentials.';
+      }
     } catch (e) {
-      print(e.toString());
-      return null;
+      return e.toString();
     }
   }
 
-  // Register with email and password
-  Future<dynamic> signUp(String email, String password, String name) async {
+  // Register with email and password — returns null on success, error string on fail
+  Future<String?> signUp(String email, String password, String name) async {
     if (!isFirebaseInitialized) {
-      // Mock successful registration
-      return "mock_user_credential";
+      return null; // Mock success
     }
     try {
       UserCredential result = await _auth!.createUserWithEmailAndPassword(email: email, password: password);
@@ -48,10 +59,24 @@ class AuthService {
           'profilePic': '',
         });
       }
-      return result;
+      return null; // null = success
+    } on FirebaseAuthException catch (e) {
+      switch (e.code) {
+        case 'email-already-in-use':
+          return 'This email is already registered.';
+        case 'weak-password':
+          return 'Password must be at least 6 characters.';
+        case 'invalid-email':
+          return 'Invalid email address.';
+        case 'operation-not-allowed':
+          return 'Email/password sign-in is not enabled. Please enable it in Firebase Console.';
+        default:
+          return e.message ?? 'Registration failed. Try again.';
+      }
+    } on FirebaseException catch (e) {
+       return e.message ?? 'Firestore database error: rules might not be set up.';
     } catch (e) {
-      print(e.toString());
-      return null;
+      return e.toString();
     }
   }
 
@@ -62,20 +87,18 @@ class AuthService {
     }
   }
 
-  // Get user data
-  Future<UserModel?> getUserData(String uid) async {
+  // Get user data -> Throws exception if Firestore fails
+  Future<UserModel> getUserData(String uid) async {
     if (!isFirebaseInitialized) {
       return UserModel(uid: 'mock_uid', email: 'test@example.com', name: 'Test User');
     }
-    try {
-      DocumentSnapshot doc = await _firestore!.collection('users').doc(uid).get();
-      if (doc.exists) {
-        return UserModel.fromMap(doc.data() as Map<String, dynamic>);
-      }
-      return null;
-    } catch (e) {
-      print(e.toString());
-      return null;
+    
+    DocumentSnapshot doc = await _firestore!.collection('users').doc(uid).get();
+    if (doc.exists) {
+      return UserModel.fromMap(doc.data() as Map<String, dynamic>);
+    } else {
+      // If user doc doesn't exist, we just create a temp one 
+      return UserModel(uid: uid, email: _auth!.currentUser?.email ?? '', name: 'User');
     }
   }
 }

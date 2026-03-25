@@ -7,6 +7,7 @@ import 'providers/ride_provider.dart';
 import 'screens/login_screen.dart';
 import 'screens/register_screen.dart';
 import 'screens/home_screen.dart';
+import 'screens/map_screen.dart'; // Added map screen for routing
 
 bool isFirebaseInitialized = false;
 
@@ -43,6 +44,7 @@ class MyApp extends StatelessWidget {
           '/login': (context) => LoginScreen(),
           '/register': (context) => RegisterScreen(),
           '/home': (context) => HomeScreen(),
+          '/map': (context) => MapScreen(), // Added map route
         },
       ),
     );

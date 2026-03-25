@@ -40,7 +40,7 @@ class RideProvider with ChangeNotifier {
     notifyListeners();
   }
 
-  Future<void> requestRide({
+  Future<String?> requestRide({
     required String userId,
     required double pickupLat,
     required double pickupLng,
@@ -76,12 +76,18 @@ class RideProvider with ChangeNotifier {
       Future.delayed(Duration(seconds: 5), () {
         _acceptRideMock(rideId);
       });
+      _isRequesting = false;
+      notifyListeners();
+      return null;
+    } on FirebaseException catch (e) {
+      _isRequesting = false;
+      notifyListeners();
+      return e.message ?? "Database error. Please check Firestore rules.";
     } catch (e) {
-      print(e.toString());
+      _isRequesting = false;
+      notifyListeners();
+      return e.toString();
     }
-
-    _isRequesting = false;
-    notifyListeners();
   }
 
   void _acceptRideMock(String rideId) async {

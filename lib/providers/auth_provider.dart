@@ -41,20 +41,25 @@ class AuthProvider with ChangeNotifier {
     return result != null;
   }
 
-  Future<bool> register(String email, String password, String name) async {
+  // Returns null on success, error message string on failure
+  Future<String?> register(String email, String password, String name) async {
     _isLoading = true;
     notifyListeners();
-    
-    var result = await _authService.signUp(email, password, name);
-    
-    if (!isFirebaseInitialized && result != null) {
-      _userModel = UserModel(uid: 'mock_uid', email: email, name: name);
+
+    String? error = await _authService.signUp(email, password, name);
+
+    if (error == null) {
+      // Success — for mock mode set user manually
+      if (!isFirebaseInitialized) {
+        _userModel = UserModel(uid: 'mock_uid', email: email, name: name);
+      }
+      // For real Firebase, the auth stream will auto-update _userModel
     }
-    
+
     _isLoading = false;
     notifyListeners();
-    
-    return result != null;
+
+    return error; // null = success, string = error message
   }
 
   Future<void> logout() async {
