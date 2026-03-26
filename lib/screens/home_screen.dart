@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../theme.dart';
 
 class HomeScreen extends StatefulWidget {
   @override
@@ -11,194 +12,171 @@ class _HomeScreenState extends State<HomeScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.white,
+      backgroundColor: AppTheme.background,
       body: SafeArea(
         child: SingleChildScrollView(
           child: Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 16.0),
+            padding: const EdgeInsets.symmetric(horizontal: 24.0),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                SizedBox(height: 10),
-                Center(
-                  child: Text(
-                    'Uber',
-                    style: TextStyle(fontSize: 32, fontWeight: FontWeight.bold, letterSpacing: -1),
-                  ),
-                ),
-                SizedBox(height: 20),
+                const SizedBox(height: 20),
                 
-                // Search Bar
-                Container(
-                  padding: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-                  decoration: BoxDecoration(
-                    color: Colors.grey[200],
-                    borderRadius: BorderRadius.circular(30),
-                  ),
-                  child: Row(
-                    children: [
-                      Icon(Icons.search, size: 28, color: Colors.black),
-                      SizedBox(width: 10),
-                      Text('Where to?', style: TextStyle(fontSize: 20, fontWeight: FontWeight.w600)),
-                      Spacer(),
-                      Container(
-                        padding: EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-                        decoration: BoxDecoration(
-                          color: Colors.white,
-                          borderRadius: BorderRadius.circular(20),
-                        ),
-                        child: Row(
-                          children: [
-                            Icon(Icons.schedule, size: 18),
-                            SizedBox(width: 5),
-                            Text('Later', style: TextStyle(fontWeight: FontWeight.bold)),
-                          ],
-                        ),
-                      )
-                    ],
-                  ),
-                ),
-                
-                SizedBox(height: 30),
-                
-                // For You Section
+                // Header Profile Info
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    Text('For you', style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold)),
-                    Icon(Icons.arrow_forward),
-                  ],
-                ),
-                SizedBox(height: 20),
-                
-                // Grid Options
-                GridView.count(
-                  shrinkWrap: true,
-                  physics: NeverScrollableScrollPhysics(),
-                  crossAxisCount: 3,
-                  mainAxisSpacing: 15,
-                  crossAxisSpacing: 10,
-                  childAspectRatio: 0.85,
-                  children: [
-                    _buildServiceItem('Ride', Icons.directions_car, context, banner: 'Promo', destination: '/map'),
-                    _buildServiceItem('Intercity', Icons.commute, context),
-                    _buildServiceItem('Buses', Icons.directions_bus, context),
-                    _buildServiceItem('Reserve', Icons.calendar_month, context),
-                    _buildServiceItem('Seniors', Icons.elderly, context),
-                    _buildServiceItem('See all', Icons.apps, context),
-                  ],
-                ),
-                
-                SizedBox(height: 20),
-                
-                // Banner Section
-                Container(
-                  width: double.infinity,
-                  padding: EdgeInsets.all(20),
-                  decoration: BoxDecoration(
-                    color: Color(0xFFE8B638), // Yellow Uber banner color
-                    borderRadius: BorderRadius.circular(15),
-                  ),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        'Support that never\nsleeps',
-                        style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
+                    Container(
+                      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                      decoration: BoxDecoration(
+                        color: AppTheme.surfaceContainerLow,
+                        borderRadius: BorderRadius.circular(24),
                       ),
-                      SizedBox(height: 15),
-                      ElevatedButton(
-                        onPressed: () {},
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: Colors.white,
-                          foregroundColor: Colors.black,
-                          elevation: 0,
-                          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+                      child: Row(
+                        children: [
+                          const CircleAvatar(
+                            radius: 16,
+                            backgroundColor: AppTheme.secondary,
+                            child: Icon(Icons.person, color: AppTheme.background, size: 20),
+                          ),
+                          const SizedBox(width: 8),
+                          Text('Good Morning', style: Theme.of(context).textTheme.bodyMedium?.copyWith(fontWeight: FontWeight.w600)),
+                        ],
+                      ),
+                    ),
+                    IconButton(
+                      icon: const Icon(Icons.notifications_outlined, color: AppTheme.onSurface),
+                      onPressed: () {},
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 48),
+
+                // Hero Text
+                Text(
+                  'Where to?',
+                  style: Theme.of(context).textTheme.displayLarge?.copyWith(fontSize: 48),
+                ),
+                const SizedBox(height: 32),
+                
+                // Destination Input (Navigates to Map)
+                GestureDetector(
+                  onTap: () => Navigator.pushNamed(context, '/map'),
+                  child: Container(
+                    padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 20),
+                    decoration: BoxDecoration(
+                      color: AppTheme.surfaceContainerHighest,
+                      borderRadius: BorderRadius.circular(24),
+                      boxShadow: [
+                        BoxShadow(
+                          color: Colors.black.withOpacity(0.2),
+                          blurRadius: 40,
+                          offset: const Offset(0, 20),
                         ),
-                        child: Text('Book Intercity', style: TextStyle(fontWeight: FontWeight.bold)),
-                      )
-                    ],
+                      ],
+                    ),
+                    child: Row(
+                      children: [
+                        const Icon(Icons.search, size: 28, color: AppTheme.secondary),
+                        const SizedBox(width: 16),
+                        Text('Search destination', style: Theme.of(context).textTheme.bodyLarge?.copyWith(color: AppTheme.primary)),
+                        const Spacer(),
+                        Container(
+                          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                          decoration: BoxDecoration(
+                            color: AppTheme.surfaceContainerLow,
+                            borderRadius: BorderRadius.circular(20),
+                          ),
+                          child: const Row(
+                            children: [
+                              Icon(Icons.schedule, size: 18, color: AppTheme.onSurface),
+                              SizedBox(width: 8),
+                              Text('Now', style: TextStyle(fontWeight: FontWeight.bold, color: AppTheme.onSurface)),
+                            ],
+                          ),
+                        )
+                      ],
+                    ),
                   ),
                 ),
                 
-                SizedBox(height: 30),
-                Text('More ways to use Uber', style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold)),
-                SizedBox(height: 10),
-                Container(
-                  height: 150,
-                  decoration: BoxDecoration(
-                    color: Colors.grey[200],
-                    borderRadius: BorderRadius.circular(15),
-                  ),
-                  child: Center(child: Text('Image Placeholder', style: TextStyle(color: Colors.grey))),
+                const SizedBox(height: 48),
+                
+                // Saved Places
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Text('Saved Places', style: Theme.of(context).textTheme.headlineMedium?.copyWith(fontSize: 24)),
+                    const Icon(Icons.arrow_forward_ios, size: 16, color: AppTheme.primary),
+                  ],
                 ),
-                SizedBox(height: 20),
+                const SizedBox(height: 24),
+                
+                // List of saved places
+                _buildSavedPlace('Home', '123 Fluid Way, Glass City', Icons.home_rounded),
+                const SizedBox(height: 20),
+                _buildSavedPlace('Office', 'Tech Park, District 9', Icons.work_rounded),
               ],
             ),
           ),
         ),
       ),
-      bottomNavigationBar: BottomNavigationBar(
-        currentIndex: _selectedIndex,
-        type: BottomNavigationBarType.fixed,
-        selectedItemColor: Colors.black,
-        unselectedItemColor: Colors.grey,
-        onTap: (index) {
-          setState(() {
-            _selectedIndex = index;
-          });
-        },
-        items: [
-          BottomNavigationBarItem(icon: Icon(Icons.home), label: 'Home'),
-          BottomNavigationBarItem(icon: Icon(Icons.apps), label: 'Services'),
-          BottomNavigationBarItem(icon: Icon(Icons.receipt_long), label: 'Activity'),
-          BottomNavigationBarItem(icon: Icon(Icons.person), label: 'Account'),
-        ],
+      bottomNavigationBar: Theme(
+        data: Theme.of(context).copyWith(
+          splashColor: Colors.transparent,
+          highlightColor: Colors.transparent,
+        ),
+        child: BottomNavigationBar(
+          backgroundColor: AppTheme.surfaceContainerLow,
+          currentIndex: _selectedIndex,
+          type: BottomNavigationBarType.fixed,
+          selectedItemColor: AppTheme.secondary,
+          unselectedItemColor: AppTheme.primary.withOpacity(0.5),
+          showSelectedLabels: false,
+          showUnselectedLabels: false,
+          elevation: 0,
+          onTap: (index) {
+            setState(() {
+              _selectedIndex = index;
+            });
+            // If Account tab clicked, add logic
+          },
+          items: const [
+            BottomNavigationBarItem(icon: Icon(Icons.explore_rounded, size: 28), label: 'Home'),
+            BottomNavigationBarItem(icon: Icon(Icons.receipt_long_rounded, size: 28), label: 'Activity'),
+            BottomNavigationBarItem(icon: Icon(Icons.account_circle_rounded, size: 28), label: 'Account'),
+          ],
+        ),
       ),
     );
   }
 
-  Widget _buildServiceItem(String title, IconData icon, BuildContext context, {String? banner, String? destination}) {
-    return GestureDetector(
-      onTap: () {
-        if (destination != null) {
-          Navigator.pushNamed(context, destination);
-        }
-      },
-      child: Column(
+  Widget _buildSavedPlace(String title, String subtitle, IconData icon) {
+    return Container(
+      padding: const EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        color: AppTheme.surfaceContainerLow,
+        borderRadius: BorderRadius.circular(20),
+      ),
+      child: Row(
         children: [
-          Stack(
-            clipBehavior: Clip.none,
+          Container(
+            padding: const EdgeInsets.all(12),
+            decoration: const BoxDecoration(
+              color: AppTheme.surface,
+              shape: BoxShape.circle,
+            ),
+            child: Icon(icon, color: AppTheme.onSurface, size: 24),
+          ),
+          const SizedBox(width: 16),
+          Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Container(
-                height: 75,
-                width: 75,
-                decoration: BoxDecoration(
-                  color: Colors.grey[100],
-                  borderRadius: BorderRadius.circular(15),
-                ),
-                child: Center(child: Icon(icon, size: 40, color: Colors.black87)),
-              ),
-              if (banner != null)
-                Positioned(
-                  top: -8,
-                  left: 0,
-                  right: 0,
-                  child: Center(
-                    child: Container(
-                      padding: EdgeInsets.symmetric(horizontal: 8, vertical: 2),
-                      decoration: BoxDecoration(
-                        color: Colors.green[700],
-                        borderRadius: BorderRadius.circular(12),
-                      ),
-                      child: Text(banner, style: TextStyle(color: Colors.white, fontSize: 10, fontWeight: FontWeight.bold)),
-                    ),
-                  ),
-                ),
+              Text(title, style: Theme.of(context).textTheme.bodyLarge?.copyWith(fontWeight: FontWeight.bold)),
+              const SizedBox(height: 4),
+              Text(subtitle, style: Theme.of(context).textTheme.bodyMedium?.copyWith(color: AppTheme.primary)),
             ],
           ),
-          SizedBox(height: 8),
-          Text(title, style: TextStyle(fontWeight: FontWeight.w600, fontSize: 13), textAlign: TextAlign.center),
         ],
       ),
     );
