@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../providers/auth_provider.dart';
+import '../theme.dart';
 
 class RegisterScreen extends StatefulWidget {
   @override
@@ -17,122 +18,139 @@ class _RegisterScreenState extends State<RegisterScreen> {
     final authProvider = Provider.of<AuthProvider>(context);
 
     return Scaffold(
-      backgroundColor: Colors.grey[200],
+      backgroundColor: AppTheme.background,
       appBar: AppBar(
-        title: Text(''),
         backgroundColor: Colors.transparent,
         elevation: 0,
-        iconTheme: IconThemeData(color: Colors.black),
+        iconTheme: const IconThemeData(color: AppTheme.onSurface),
       ),
-      body: Center(
-        child: SingleChildScrollView(
-          child: Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 24.0),
-            child: Container(
-              padding: EdgeInsets.all(32),
-              decoration: BoxDecoration(
-                color: Color(0xFF111827),
-                borderRadius: BorderRadius.circular(20),
-                boxShadow: [
-                  BoxShadow(color: Colors.black26, blurRadius: 20, offset: Offset(0, 10)),
-                ],
-              ),
+      body: SafeArea(
+        child: Center(
+          child: SingleChildScrollView(
+            child: Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 24.0),
               child: Column(
-                mainAxisSize: MainAxisSize.min,
+                mainAxisAlignment: MainAxisAlignment.center,
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
                   Text(
-                    'Sign Up',
-                    textAlign: TextAlign.center,
-                    style: TextStyle(color: Colors.white, fontSize: 32, fontWeight: FontWeight.bold),
+                    'Create Account',
+                    textAlign: TextAlign.left,
+                    style: Theme.of(context).textTheme.displayLarge?.copyWith(fontSize: 40),
                   ),
-                  SizedBox(height: 30),
-                  
+                  const SizedBox(height: 8),
+                  Text(
+                    'Join the fleet and ride with us.',
+                    textAlign: TextAlign.left,
+                    style: Theme.of(context).textTheme.bodyLarge?.copyWith(color: AppTheme.primary),
+                  ),
+                  const SizedBox(height: 48),
+
                   // Name Field
-                  Text('Full Name', style: TextStyle(color: Colors.grey[400], fontSize: 14)),
-                  SizedBox(height: 8),
-                  _buildTextField(_nameController, false),
-                  SizedBox(height: 16),
+                  Text('Full Name', style: Theme.of(context).textTheme.labelSmall?.copyWith(color: AppTheme.primary)),
+                  const SizedBox(height: 8),
+                  TextField(
+                    controller: _nameController,
+                    style: Theme.of(context).textTheme.bodyLarge,
+                    decoration: const InputDecoration(
+                      hintText: 'John Doe',
+                      hintStyle: TextStyle(color: Colors.white30),
+                    ),
+                  ),
+                  const SizedBox(height: 24),
 
                   // Email Field
-                  Text('Email', style: TextStyle(color: Colors.grey[400], fontSize: 14)),
-                  SizedBox(height: 8),
-                  _buildTextField(_emailController, false),
-                  SizedBox(height: 16),
-                  
+                  Text('Email', style: Theme.of(context).textTheme.labelSmall?.copyWith(color: AppTheme.primary)),
+                  const SizedBox(height: 8),
+                  TextField(
+                    controller: _emailController,
+                    style: Theme.of(context).textTheme.bodyLarge,
+                    decoration: const InputDecoration(
+                      hintText: 'you@example.com',
+                      hintStyle: TextStyle(color: Colors.white30),
+                    ),
+                  ),
+                  const SizedBox(height: 24),
+
                   // Password Field
-                  Text('Password', style: TextStyle(color: Colors.grey[400], fontSize: 14)),
-                  SizedBox(height: 8),
-                  _buildTextField(_passwordController, true),
-                  
-                  SizedBox(height: 30),
+                  Text('Password', style: Theme.of(context).textTheme.labelSmall?.copyWith(color: AppTheme.primary)),
+                  const SizedBox(height: 8),
+                  TextField(
+                    controller: _passwordController,
+                    obscureText: true,
+                    style: Theme.of(context).textTheme.bodyLarge,
+                    decoration: const InputDecoration(
+                      hintText: '••••••••',
+                      hintStyle: TextStyle(color: Colors.white30),
+                    ),
+                  ),
+
+                  const SizedBox(height: 48),
+
                   // Register Button
                   authProvider.isLoading
-                      ? Center(child: CircularProgressIndicator(color: Color(0xFFA78BFA)))
-                      : ElevatedButton(
-                          onPressed: () async {
-                            String? error = await authProvider.register(
-                              _emailController.text.trim(),
-                              _passwordController.text,
-                              _nameController.text.trim(),
-                            );
-                            if (error == null) {
-                              Navigator.of(context).pushReplacementNamed('/home');
-                            } else if (context.mounted) {
-                              ScaffoldMessenger.of(context).showSnackBar(
-                                SnackBar(content: Text(error), backgroundColor: Colors.red, duration: Duration(seconds: 4)),
-                              );
-                            }
-                          },
-                          style: ElevatedButton.styleFrom(
-                            backgroundColor: Color(0xFFA78BFA),
-                            foregroundColor: Colors.black,
-                            padding: EdgeInsets.symmetric(vertical: 16),
-                            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+                      ? const Center(child: CircularProgressIndicator(color: AppTheme.secondary))
+                      : Container(
+                          decoration: BoxDecoration(
+                            gradient: const LinearGradient(
+                              colors: [AppTheme.secondary, AppTheme.secondaryContainer],
+                              begin: Alignment.topLeft,
+                              end: Alignment.bottomRight,
+                            ),
+                            borderRadius: BorderRadius.circular(48),
+                            boxShadow: [
+                              BoxShadow(
+                                color: AppTheme.secondary.withOpacity(0.3),
+                                blurRadius: 20,
+                                offset: const Offset(0, 10),
+                              )
+                            ],
                           ),
-                          child: Text('Create Account', style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
+                          child: ElevatedButton(
+                            onPressed: () async {
+                              String? error = await authProvider.register(
+                                _emailController.text.trim(),
+                                _passwordController.text,
+                                _nameController.text.trim(),
+                              );
+                              if (error == null) {
+                                Navigator.of(context).pushReplacementNamed('/home');
+                              } else if (context.mounted) {
+                                ScaffoldMessenger.of(context).showSnackBar(
+                                  SnackBar(content: Text(error), backgroundColor: Colors.red),
+                                );
+                              }
+                            },
+                            style: ElevatedButton.styleFrom(
+                              backgroundColor: Colors.transparent,
+                              shadowColor: Colors.transparent,
+                              padding: const EdgeInsets.symmetric(vertical: 20),
+                            ),
+                            child: Text(
+                              'Sign Up',
+                              style: Theme.of(context).textTheme.titleMedium?.copyWith(color: AppTheme.background, fontWeight: FontWeight.bold),
+                            ),
+                          ),
                         ),
-                  
-                  SizedBox(height: 20),
+
+                  const SizedBox(height: 40),
+
                   // Back to Login Link
                   Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      Text("Already have an account? ", style: TextStyle(color: Colors.grey[400])),
+                      Text("Already have an account? ", style: Theme.of(context).textTheme.bodyMedium?.copyWith(color: AppTheme.primary)),
                       GestureDetector(
                         onTap: () => Navigator.of(context).pop(),
-                        child: Text('Sign in', style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
+                        child: Text('Sign in', style: Theme.of(context).textTheme.bodyMedium?.copyWith(color: AppTheme.secondary, fontWeight: FontWeight.bold)),
                       ),
                     ],
                   ),
+                  const SizedBox(height: 40),
                 ],
               ),
             ),
           ),
-        ),
-      ),
-    );
-  }
-
-  Widget _buildTextField(TextEditingController controller, bool obscure) {
-    return TextField(
-      controller: controller,
-      obscureText: obscure,
-      style: TextStyle(color: Colors.white),
-      decoration: InputDecoration(
-        filled: true,
-        fillColor: Color(0xFF1F2937),
-        border: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(8),
-          borderSide: BorderSide(color: Colors.grey[800]!),
-        ),
-        enabledBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(8),
-          borderSide: BorderSide(color: Colors.grey[800]!),
-        ),
-        focusedBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(8),
-          borderSide: BorderSide(color: Color(0xFFA78BFA)),
         ),
       ),
     );

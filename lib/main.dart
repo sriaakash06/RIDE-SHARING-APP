@@ -8,6 +8,7 @@ import 'screens/login_screen.dart';
 import 'screens/register_screen.dart';
 import 'screens/home_screen.dart';
 import 'screens/map_screen.dart'; // Added map screen for routing
+import 'theme.dart';
 
 bool isFirebaseInitialized = false;
 
@@ -35,10 +36,7 @@ class MyApp extends StatelessWidget {
       ],
       child: MaterialApp(
         title: 'Ride Sharing App',
-        theme: ThemeData(
-          primarySwatch: Colors.blue,
-          visualDensity: VisualDensity.adaptivePlatformDensity,
-        ),
+        theme: AppTheme.darkTheme,
         home: AuthWrapper(),
         routes: {
           '/login': (context) => LoginScreen(),

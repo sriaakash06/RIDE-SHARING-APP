@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../providers/auth_provider.dart';
+import '../theme.dart';
 
 class LoginScreen extends StatefulWidget {
   @override
@@ -16,179 +17,134 @@ class _LoginScreenState extends State<LoginScreen> {
     final authProvider = Provider.of<AuthProvider>(context);
 
     return Scaffold(
-      backgroundColor: Colors.grey[200], // Light background outside the card
-      body: Center(
-        child: SingleChildScrollView(
-          child: Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 24.0),
-            child: Container(
-              padding: EdgeInsets.all(32),
-              decoration: BoxDecoration(
-                color: Color(0xFF111827), // Dark navy card
-                borderRadius: BorderRadius.circular(20),
-                boxShadow: [
-                  BoxShadow(color: Colors.black26, blurRadius: 20, offset: Offset(0, 10)),
-                ],
-              ),
+      backgroundColor: AppTheme.background,
+      body: SafeArea(
+        child: Center(
+          child: SingleChildScrollView(
+            child: Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 24.0),
               child: Column(
-                mainAxisSize: MainAxisSize.min,
+                mainAxisAlignment: MainAxisAlignment.center,
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
+                  const SizedBox(height: 40),
                   Text(
-                    'Login',
-                    textAlign: TextAlign.center,
-                    style: TextStyle(color: Colors.white, fontSize: 32, fontWeight: FontWeight.bold),
+                    'Welcome Back',
+                    textAlign: TextAlign.left,
+                    style: Theme.of(context).textTheme.displayLarge?.copyWith(fontSize: 40),
                   ),
-                  SizedBox(height: 30),
-                  
+                  const SizedBox(height: 8),
+                  Text(
+                    'Enter your details to ride.',
+                    textAlign: TextAlign.left,
+                    style: Theme.of(context).textTheme.bodyLarge?.copyWith(color: AppTheme.primary),
+                  ),
+                  const SizedBox(height: 48),
+
                   // Email Field
-                  Text('Email', style: TextStyle(color: Colors.grey[400], fontSize: 14)),
-                  SizedBox(height: 8),
+                  Text('Email', style: Theme.of(context).textTheme.labelSmall?.copyWith(color: AppTheme.primary)),
+                  const SizedBox(height: 8),
                   TextField(
                     controller: _emailController,
-                    style: TextStyle(color: Colors.white),
-                    decoration: InputDecoration(
-                      filled: true,
-                      fillColor: Color(0xFF1F2937), // Slightly lighter dark for input
-                      border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(8),
-                        borderSide: BorderSide(color: Colors.grey[800]!),
-                      ),
-                      enabledBorder: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(8),
-                        borderSide: BorderSide(color: Colors.grey[800]!),
-                      ),
-                      focusedBorder: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(8),
-                        borderSide: BorderSide(color: Color(0xFFA78BFA)),
-                      ),
+                    style: Theme.of(context).textTheme.bodyLarge,
+                    decoration: const InputDecoration(
+                      hintText: 'you@example.com',
+                      hintStyle: TextStyle(color: Colors.white30),
                     ),
                   ),
-                  SizedBox(height: 20),
-                  
+                  const SizedBox(height: 24),
+
                   // Password Field
-                  Text('Password', style: TextStyle(color: Colors.grey[400], fontSize: 14)),
-                  SizedBox(height: 8),
+                  Text('Password', style: Theme.of(context).textTheme.labelSmall?.copyWith(color: AppTheme.primary)),
+                  const SizedBox(height: 8),
                   TextField(
                     controller: _passwordController,
                     obscureText: true,
-                    style: TextStyle(color: Colors.white),
-                    decoration: InputDecoration(
-                      filled: true,
-                      fillColor: Color(0xFF1F2937),
-                      border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(8),
-                        borderSide: BorderSide(color: Colors.grey[800]!),
-                      ),
-                      enabledBorder: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(8),
-                        borderSide: BorderSide(color: Colors.grey[800]!),
-                      ),
-                      focusedBorder: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(8),
-                        borderSide: BorderSide(color: Color(0xFFA78BFA)),
-                      ),
+                    style: Theme.of(context).textTheme.bodyLarge,
+                    decoration: const InputDecoration(
+                      hintText: '••••••••',
+                      hintStyle: TextStyle(color: Colors.white30),
                     ),
                   ),
-                  
-                  SizedBox(height: 12),
-                  // Forgot Password
+
+                  const SizedBox(height: 24),
                   Align(
                     alignment: Alignment.centerRight,
                     child: TextButton(
                       onPressed: () {},
-                      child: Text('Forgot Password ?', style: TextStyle(color: Colors.white, fontWeight: FontWeight.w600)),
+                      child: Text('Forgot Password?', style: Theme.of(context).textTheme.bodyMedium?.copyWith(color: AppTheme.primary, fontWeight: FontWeight.w600)),
                     ),
                   ),
-                  
-                  SizedBox(height: 20),
+
+                  const SizedBox(height: 40),
+
                   // Sign In Button
                   authProvider.isLoading
-                      ? Center(child: CircularProgressIndicator(color: Color(0xFFA78BFA)))
-                      : ElevatedButton(
-                          onPressed: () async {
-                            String? error = await authProvider.login(
-                              _emailController.text.trim(),
-                              _passwordController.text,
-                            );
-                            if (error == null) {
-                              Navigator.of(context).pushReplacementNamed('/home');
-                            } else if (context.mounted) {
-                              ScaffoldMessenger.of(context).showSnackBar(
-                                SnackBar(
-                                  content: Text(error), 
-                                  backgroundColor: Colors.red,
-                                  duration: Duration(seconds: 4),
-                                ),
-                              );
-                            }
-                          },
-                          style: ElevatedButton.styleFrom(
-                            backgroundColor: Color(0xFFA78BFA), // Light purple
-                            foregroundColor: Colors.black,
-                            padding: EdgeInsets.symmetric(vertical: 16),
-                            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+                      ? const Center(child: CircularProgressIndicator(color: AppTheme.secondary))
+                      : Container(
+                          decoration: BoxDecoration(
+                            gradient: const LinearGradient(
+                              colors: [AppTheme.secondary, AppTheme.secondaryContainer],
+                              begin: Alignment.topLeft,
+                              end: Alignment.bottomRight,
+                            ),
+                            borderRadius: BorderRadius.circular(48),
+                            boxShadow: [
+                              BoxShadow(
+                                color: AppTheme.secondary.withOpacity(0.3),
+                                blurRadius: 20,
+                                offset: const Offset(0, 10),
+                              )
+                            ],
                           ),
-                          child: Text('Sign in', style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
+                          child: ElevatedButton(
+                            onPressed: () async {
+                              String? error = await authProvider.login(
+                                _emailController.text.trim(),
+                                _passwordController.text,
+                              );
+                              if (error == null) {
+                                Navigator.of(context).pushReplacementNamed('/home');
+                              } else if (context.mounted) {
+                                ScaffoldMessenger.of(context).showSnackBar(
+                                  SnackBar(
+                                    content: Text(error),
+                                    backgroundColor: Colors.red,
+                                  ),
+                                );
+                              }
+                            },
+                            style: ElevatedButton.styleFrom(
+                              backgroundColor: Colors.transparent,
+                              shadowColor: Colors.transparent,
+                              padding: const EdgeInsets.symmetric(vertical: 20),
+                            ),
+                            child: Text(
+                              'Sign In',
+                              style: Theme.of(context).textTheme.titleMedium?.copyWith(color: AppTheme.background, fontWeight: FontWeight.bold),
+                            ),
+                          ),
                         ),
-                  
-                  SizedBox(height: 30),
-                  // Social Login Section
-                  Row(
-                    children: [
-                      Expanded(child: Divider(color: Colors.grey[800])),
-                      Padding(
-                        padding: const EdgeInsets.symmetric(horizontal: 16.0),
-                        child: Text('Login with social accounts', style: TextStyle(color: Colors.grey[400], fontSize: 13)),
-                      ),
-                      Expanded(child: Divider(color: Colors.grey[800])),
-                    ],
-                  ),
-                  SizedBox(height: 20),
-                  
-                  // Social Icons (Placeholders using letters/icons)
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      _buildSocialIcon(Icons.g_mobiledata, size: 40),
-                      SizedBox(width: 20),
-                      _buildSocialIcon(Icons.flutter_dash), // Placeholder for Twitter
-                      SizedBox(width: 20),
-                      _buildSocialIcon(Icons.code), // Placeholder for GitHub
-                    ],
-                  ),
-                  SizedBox(height: 30),
-                  
+
+                  const SizedBox(height: 40),
+
                   // Sign Up Link
                   Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      Text("Don't have an account? ", style: TextStyle(color: Colors.grey[400])),
+                      Text("Don't have an account? ", style: Theme.of(context).textTheme.bodyMedium?.copyWith(color: AppTheme.primary)),
                       GestureDetector(
                         onTap: () => Navigator.of(context).pushNamed('/register'),
-                        child: Text('Sign up', style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
+                        child: Text('Sign up', style: Theme.of(context).textTheme.bodyMedium?.copyWith(color: AppTheme.secondary, fontWeight: FontWeight.bold)),
                       ),
                     ],
                   ),
+                  const SizedBox(height: 40),
                 ],
               ),
             ),
           ),
         ),
-      ),
-    );
-  }
-
-  Widget _buildSocialIcon(IconData icon, {double size = 28}) {
-    return Container(
-      width: 50,
-      height: 50,
-      decoration: BoxDecoration(
-        color: Colors.transparent,
-        shape: BoxShape.circle,
-      ),
-      child: Center(
-        child: Icon(icon, color: Colors.white, size: size),
       ),
     );
   }
